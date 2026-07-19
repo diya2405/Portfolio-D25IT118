@@ -6,7 +6,6 @@ function ContactPage() {
     <>
       <Contact />
     </>
-      
   );
 }
 
