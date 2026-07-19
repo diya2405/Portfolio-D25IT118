@@ -15,7 +15,6 @@ function App() {
   const skills = ["Java", "Flutter", "Database", "Python", "Machine Learning"];
   const projects = ["AI Assistant App", "JobFlow App"];
 
-  const [showSkills, setShowSkills] = useState(true); // useState #1: toggle visibility
   const [message, setMessage] = useState("");          // useState #2: controlled form input
 
   return (
@@ -27,10 +26,7 @@ function App() {
           <>
             <Header name="Diya Shah" />
             <About />
-            <button onClick={() => setShowSkills(!showSkills)}>
-              {showSkills ? "Hide Skills" : "Show Skills"}
-            </button>
-            {showSkills && <Skills skillsList={skills} />}
+            <Skills skillsList={skills} />
           </>
         } />
 

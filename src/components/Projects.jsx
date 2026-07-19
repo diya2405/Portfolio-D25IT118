@@ -1,23 +1,20 @@
-function Projects(props) {
+function Projects({ projectlist }) {
   return (
-    <section>
-      <h1>Projects</h1>
-      <div className="project-grid">
-        {props.projectlist.map((project, index) => (
-          <div className="project-card" key={index}>
-            <h3>{project.title}</h3>
-            <p>{project.description}</p>
-            <div className="tech-tags">
-              {project.tech.map((t, i) => (
-                <span className="tech-tag" key={i}>{t}</span>
-              ))}
+    <section className="panel">
+      <div className="panel-tab">projects.md</div>
+      <div className="grid">
+        {projectlist.map((p, i) => (
+          <div className="card" key={i}>
+            <h3>{p.title}</h3>
+            <p>{p.description}</p>
+            <div className="tag-list inline">
+              {p.tech.map((t, j) => <span key={j}>{t}</span>)}
             </div>
-            <a href={project.link} target="_blank" rel="noreferrer">View on GitHub →</a>
+            <a href={p.link} target="_blank" rel="noreferrer">GitHub →</a>
           </div>
         ))}
       </div>
     </section>
   );
 }
-
 export default Projects;

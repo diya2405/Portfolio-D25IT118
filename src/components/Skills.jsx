@@ -1,15 +1,11 @@
-function Skills(props) {
+function Skills({ skillsList }) {
   return (
-    <section>
-      <h1>My Skills</h1>
-
-      <ul>
-        {props.skillsList.map((skill, index) => (
-          <li key={index}>{skill}</li>
-        ))}
+    <section className="panel">
+      <div className="panel-tab">skills.json</div>
+      <ul className="tag-list">
+        {skillsList.map((s, i) => <li key={i}>{s}</li>)}
       </ul>
     </section>
   );
 }
-
 export default Skills;
