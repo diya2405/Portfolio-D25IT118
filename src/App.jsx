@@ -10,6 +10,7 @@ import Projects from "./components/Projects"
 import Contact from "./pages/ContactPage"
 import Footer from "./components/Footer"
 import NotFound from "./pages/NotFoundPage"
+import ProjectsPage from './pages/ProjectsPage'
 function App() {
   const skills = ["Java", "Flutter", "Database", "Python", "Machine Learning"];
   const projects = ["AI Assistant App", "JobFlow App"];
@@ -33,7 +34,7 @@ function App() {
           </>
         } />
 
-        <Route path="/projects" element={<Projects projectlist={projects} />} />
+        <Route path="/projects" element={<ProjectsPage />} />
 
         <Route path="/contact" element={
           <Contact />
