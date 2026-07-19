@@ -30,7 +30,7 @@ function Contact() {
       />
       <p>Characters: {message.length}</p>
         <br /><br />
-        <button onClick={() => {
+        <button class="btn" onClick={() => {
             alert(`Thank you, ${name}! Your message has been sent.`);
             setName("");
             setEmail("");
