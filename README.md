@@ -59,6 +59,12 @@ App runs at `http://localhost:5173/`
   - Controlled form input (message textarea with live character count)
 - Navigation via `NavLink` — no full page reloads between routes
 
+## Practical 3 — API Integration
+- Fetches live repositories from the GitHub REST API (`/users/diya2405/repos`).
+- No API key required (public, unauthenticated endpoint).
+- Loading state shown via a spinner; failed requests show an error message with a Retry button.
+- Includes a client-side search filter over the fetched repo names.
+
 ## Author
 **Diya Shah** — B.Tech IT, CSPIT, CHARUSAT University
 [GitHub](https://github.com/diya2405)
