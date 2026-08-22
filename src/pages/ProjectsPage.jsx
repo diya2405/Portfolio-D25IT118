@@ -3,9 +3,7 @@ import Projects from '../components/Projects';
 import Spinner from '../components/Spinner';
 import ErrorMessage from '../components/ErrorMessage';
 import RepoList from '../components/RepoList';
-
 const GITHUB_USERNAME = "diya2405"; // your confirmed real GitHub username
-
 function ProjectsPage() {
   // Static featured projects — now using your REAL, verified repos
   const projects = [
@@ -45,7 +43,6 @@ function ProjectsPage() {
   useEffect(() => {
     setLoading(true);
     setError(null);
-
     fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=30`)
       .then((res) => {
         if (!res.ok) {
@@ -57,19 +54,14 @@ function ProjectsPage() {
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, [retryCount]);
-
   const handleRetry = () => setRetryCount((c) => c + 1);
-
   const filteredRepos = repos.filter((repo) =>
     repo.name.toLowerCase().includes(search.toLowerCase())
   );
-
   return (
     <>
-
       <section className="live-repos">
         <h2 className="section-title">projects.live // GitHub Repos ({repos.length})</h2>
-
         <input
           type="text"
           className="repo-search"
@@ -78,7 +70,6 @@ function ProjectsPage() {
           onChange={(e) => setSearch(e.target.value)}
           disabled={loading || error}
         />
-
         {loading && <Spinner />}
         {error && <ErrorMessage message={error} onRetry={handleRetry} />}
         {!loading && !error && <RepoList repos={filteredRepos} />}
@@ -86,5 +77,4 @@ function ProjectsPage() {
     </>
   );
 }
-
 export default ProjectsPage;

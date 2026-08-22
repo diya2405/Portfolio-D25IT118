@@ -1,0 +1,242 @@
+/* ===== Tasks Section ===== */
+.tasks-section {
+  max-width: 800px;
+  margin: 2.5rem auto;
+  padding: 2rem 2.5rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+}
+
+/* Mono label — same treatment as .panel-tab */
+.tasks-label {
+  display: inline-block;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.85rem;
+  color: var(--accent2);
+  border-bottom: 2px solid var(--accent2);
+  padding-bottom: 0.3rem;
+  margin-bottom: 1.5rem;
+}
+
+/* ===== Task Form ===== */
+.task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.task-form input {
+  display: block;
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.task-form input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(91, 91, 214, 0.15);
+}
+
+.task-form button {
+  align-self: flex-start;
+  padding: 0.55rem 1.4rem;
+  border: none;
+  border-radius: 20px;
+  background: var(--accent);
+  color: #fff;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+}
+
+.task-form button:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.task-form button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ===== Task List ===== */
+.task-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+/* ===== Individual Task ===== */
+.task-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0.9rem 1rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  transition: border-color 0.2s, opacity 0.3s;
+}
+
+.task-item:hover {
+  border-color: var(--accent);
+}
+
+/* Optimistic / unconfirmed task */
+.task-item.temp {
+  opacity: 0.5;
+}
+
+.task-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.task-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  word-break: break-word;
+}
+
+.task-item.completed .task-title {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+.task-desc {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-top: 0.25rem;
+  word-break: break-word;
+}
+
+.task-actions {
+  display: flex;
+  gap: 0.4rem;
+  margin-left: 0.8rem;
+  flex-shrink: 0;
+}
+
+.task-actions button {
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: 0.2s;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+}
+
+.task-actions button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.task-actions .delete-btn:hover {
+  border-color: #d9534f;
+  color: #d9534f;
+}
+
+/* ===== Loading & Error & Empty ===== */
+.tasks-loading,
+.tasks-error,
+.tasks-empty {
+  text-align: center;
+  padding: 2rem 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.tasks-error {
+  color: var(--accent2);
+}
+
+/* ===== Toast ===== */
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.2rem;
+  border-radius: 8px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.82rem;
+  color: #fff;
+  z-index: 100;
+  animation: toast-in 0.3s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+}
+
+.toast-success {
+  background: #22c55e;
+}
+
+.toast-error {
+  background: #ef4444;
+}
+
+.toast-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.7);
+  flex-shrink: 0;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ===== Dark Mode Overrides ===== */
+body.dark .tasks-section {
+  box-shadow: none;
+}
+
+body.dark .task-form input {
+  background: var(--bg);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+body.dark .task-form input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
+}
+
+body.dark .task-item {
+  background: var(--bg);
+  border-color: var(--border);
+}
+
+body.dark .task-actions .delete-btn:hover {
+  border-color: #f87171;
+  color: #f87171;
+}

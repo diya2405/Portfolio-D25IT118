@@ -8,6 +8,7 @@ import Contact from "./pages/ContactPage"
 import Footer from "./components/Footer"
 import NotFound from "./pages/NotFoundPage"
 import ProjectsPage from './pages/ProjectsPage'
+import TasksPage from './pages/TasksPage'
 import './App.css'
 function App() {
   const skills = ["Java", "Flutter", "Database", "Python", "Machine Learning"];
@@ -25,6 +26,7 @@ function App() {
           </>
         } />
         <Route path="/projects" element={<ProjectsPage />} />
+        <Route path="/tasks" element={<TasksPage />} />
         <Route path="/contact" element={
           <Contact />
         } />

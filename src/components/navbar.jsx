@@ -15,6 +15,7 @@ function Navbar() {
         <li><NavLink to="/" end>Home</NavLink></li>
         <li><NavLink to="/projects">Projects</NavLink></li>
         <li><NavLink to="/contact">Contact</NavLink></li>
+        <li><NavLink to="/tasks">Tasks</NavLink></li>
       </ul>
       <button className="theme-toggle" onClick={() => setDarkMode(!darkMode)}>
         {darkMode ? "☀️ Light" : "🌙 Dark"}
