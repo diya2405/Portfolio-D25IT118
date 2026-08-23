@@ -70,6 +70,21 @@ body {
     color: var(--accent);
 }
 
+.navbar .nav-logout {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--muted);
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.navbar .nav-logout:hover {
+    color: var(--text);
+}
+
 .hero {
     text-align: center;
     padding: 5rem 1rem 3.5rem;

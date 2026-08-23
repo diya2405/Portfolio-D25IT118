@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getTasks, createTask, updateTask, deleteTask } from '../api/tasks';
+import { useAuth } from '../context/AuthContext';
 import Toast from './Toast';
 import './Tasks.css';
 
@@ -12,6 +14,21 @@ function Tasks() {
   const [toast, setToast] = useState({ message: '', type: 'success' });
   const [creating, setCreating] = useState(false);
   const toastTimer = useRef(null);
+  const { token, logout } = useAuth();
+  const navigate = useNavigate();
+
+  // Handle 401 — session expired
+  function handleAuthError(err) {
+    if (err.status === 401) {
+      showToast('Session expired — please log in again', 'error');
+      setTimeout(() => {
+        logout();
+        navigate('/login');
+      }, 1000);
+      return true;
+    }
+    return false;
+  }
 
   // Clear toast timeout on unmount
   useEffect(() => {
@@ -24,10 +41,12 @@ function Tasks() {
   useEffect(() => {
     async function fetchTasks() {
       try {
-        const data = await getTasks();
+        const data = await getTasks(token);
         setTasks(data);
       } catch (err) {
-        setError(err.message);
+        if (!handleAuthError(err)) {
+          setError(err.message);
+        }
       } finally {
         setLoading(false);
       }
@@ -64,12 +83,14 @@ function Tasks() {
     setCreating(true);
 
     try {
-      const saved = await createTask({ title: trimmedTitle, description });
+      const saved = await createTask(token, { title: trimmedTitle, description });
       setTasks((prev) => prev.map((t) => (t._id === tempId ? saved : t)));
       showToast('Task created');
     } catch (err) {
       setTasks((prev) => prev.filter((t) => t._id !== tempId));
-      showToast(err.message, 'error');
+      if (!handleAuthError(err)) {
+        showToast(err.message, 'error');
+      }
     } finally {
       setCreating(false);
     }
@@ -78,11 +99,13 @@ function Tasks() {
   // Toggle complete (non-optimistic — waits for server)
   async function handleToggle(id, currentCompleted) {
     try {
-      const updated = await updateTask(id, { completed: !currentCompleted });
+      const updated = await updateTask(token, id, { completed: !currentCompleted });
       setTasks((prev) => prev.map((t) => (t._id === id ? updated : t)));
       showToast(updated.completed ? 'Task completed' : 'Task reopened');
     } catch (err) {
-      showToast(err.message, 'error');
+      if (!handleAuthError(err)) {
+        showToast(err.message, 'error');
+      }
     }
   }
 
@@ -90,11 +113,13 @@ function Tasks() {
   async function handleDelete(id) {
     if (!window.confirm('Delete this task?')) return;
     try {
-      await deleteTask(id);
+      await deleteTask(token, id);
       setTasks((prev) => prev.filter((t) => t._id !== id));
       showToast('Task deleted');
     } catch (err) {
-      showToast(err.message, 'error');
+      if (!handleAuthError(err)) {
+        showToast(err.message, 'error');
+      }
     }
   }
 

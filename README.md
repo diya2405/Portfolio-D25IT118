@@ -28,7 +28,8 @@ A personal portfolio website built with **React (Vite)**, created as part of the
 ```
 src/
 ├── api/
-│   └── tasks.js              # Central API client for the backend
+│   ├── auth.js               # Auth API client (register, login, me)
+│   └── tasks.js              # Central API client for tasks (authenticated)
 ├── components/
 │   ├── Header.jsx
 │   ├── About.jsx
@@ -40,17 +41,23 @@ src/
 │   ├── Spinner.jsx
 │   ├── Contact.jsx
 │   ├── Footer.jsx
-│   ├── Navbar.jsx
-│   ├── Tasks.jsx              # Full-stack task manager (Practical 6)
-│   ├── Tasks.css              # Styling for Tasks & Toast
-│   └── Toast.jsx              # Toast notification component
+│   ├── Navbar.jsx            # Dynamic Login/Logout navigation
+│   ├── ProtectedRoute.jsx    # Route guard for authenticated pages
+│   ├── Auth.css              # Styling for Login & Register forms
+│   ├── Tasks.jsx             # Full-stack task manager (Authenticated)
+│   ├── Tasks.css             # Styling for Tasks & Toast
+│   └── Toast.jsx             # Toast notification component
+├── context/
+│   └── AuthContext.jsx       # Global auth state & token persistence
 ├── pages/
 │   ├── Home.jsx
 │   ├── ProjectsPage.jsx
 │   ├── ContactPage.jsx
-│   ├── TasksPage.jsx          # Route page wrapper for Tasks
+│   ├── TasksPage.jsx         # Route page wrapper for Tasks
+│   ├── LoginPage.jsx         # User login page
+│   ├── RegisterPage.jsx      # User registration page
 │   └── NotFoundPage.jsx
-├── App.jsx
+├── App.jsx                   # Route configurations & AuthProvider wrapper
 ├── App.css
 └── main.jsx
 ```
@@ -98,6 +105,15 @@ App runs at `http://localhost:5173/`
 - **Toast notifications** for success/failure on every operation
 - Loading and error states handled independently for read (`GET`) and write (`POST`/`PUT`/`DELETE`) operations
 - Data persistence verified by refreshing the browser — tasks are read from MongoDB on every mount, not local state
+
+### Practical 7 — Authentication & Middleware Pipeline
+- Integrated JWT authentication with user registration (`/register`) and login (`/login`) flows
+- **AuthContext** manages global authentication state, token storage in `localStorage`, and session verification via `GET /auth/me` on page refresh
+- **Route Guarding (`ProtectedRoute`)**: Unauthenticated attempts to access `/tasks` automatically redirect to `/login`
+- **Session Expiry & 401 Handling**: When an API request fails with status `401 Unauthorized` (e.g., token expired or corrupted), the application displays a toast notification, purges the stale token from state/storage, and redirects to `/login`
+- **Dynamic Navigation (`Navbar.jsx`)**: Displays "Login" when logged out, and a "Logout" action when authenticated that clears the session and returns to Home
+- Every task request now attaches `Authorization: Bearer <token>` in HTTP headers
+- Shared responsive styles (`Auth.css`) with light & dark theme parity matching the IDE-inspired UI
 
 ## Author
 
