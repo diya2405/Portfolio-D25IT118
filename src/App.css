@@ -587,26 +587,60 @@ body.dark .tag-list.inline span {
   padding: 20px 0;
 }
 
-/* Practical 8: Route Suspense Fallback */
-.page-loader-container {
+/* Practical 8: Route Suspense Fallback Card */
+.page-loader-section {
+  max-width: 480px;
+  margin: 3.5rem auto;
+  padding: 0 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.page-loader-card {
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2.25rem 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 45vh;
+  text-align: center;
   gap: 12px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+}
+
+body.dark .page-loader-card {
+  background: #111318;
+  border-color: #23262f;
+  box-shadow: none;
+}
+
+.page-loader-badge {
+  font-size: 0.8rem;
+  color: var(--accent);
+  border-bottom: 1.5px solid var(--accent);
+  padding-bottom: 2px;
 }
 
 .page-loader-spinner {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border: 3.5px solid var(--border);
   border-top-color: var(--accent);
   border-radius: 50%;
-  animation: spin 0.75s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+  animation: spin 0.75s linear infinite;
+  margin: 6px 0;
 }
 
 .page-loader-text {
-  font-size: 0.88rem;
+  font-size: 0.92rem;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.page-loader-subtext {
+  font-size: 0.75rem;
   color: var(--muted);
+  font-family: 'Fira Code', monospace;
 }
