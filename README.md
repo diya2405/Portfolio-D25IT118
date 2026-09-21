@@ -43,6 +43,7 @@ src/
 │   ├── Footer.jsx
 │   ├── Navbar.jsx            # Dynamic Login/Logout navigation
 │   ├── ProtectedRoute.jsx    # Route guard for authenticated pages
+│   ├── PageLoader.jsx        # Suspense fallback UI for lazy chunks (Practical 8)
 │   ├── Auth.css              # Styling for Login & Register forms
 │   ├── Tasks.jsx             # Full-stack task manager (Authenticated)
 │   ├── Tasks.css             # Styling for Tasks & Toast
@@ -88,7 +89,7 @@ App runs at `http://localhost:5173/`
 - `useState` used meaningfully for:
   - Toggling UI visibility (tip on Contact page)
   - Controlled form input (message textarea with live character count)
-- Navigation via `NavLink` — no full page reloads between routes
+  - Navigation via `NavLink` — no full page reloads between routes
 
 ### Practical 3 — API Integration
 - Fetches live repositories from the GitHub REST API (`/users/diya2405/repos`)
@@ -114,6 +115,44 @@ App runs at `http://localhost:5173/`
 - **Dynamic Navigation (`Navbar.jsx`)**: Displays "Login" when logged out, and a "Logout" action when authenticated that clears the session and returns to Home
 - Every task request now attaches `Authorization: Bearer <token>` in HTTP headers
 - Shared responsive styles (`Auth.css`) with light & dark theme parity matching the IDE-inspired UI
+
+### Practical 8 — Performance Optimization and Lazy Loading in React
+- Implemented **route-based code splitting** across all pages using `React.lazy()` and dynamic `import()`:
+  - `Home` (`/`)
+  - `ProjectsPage` (`/projects`)
+  - `ContactPage` (`/contact`)
+  - `TasksPage` (`/tasks`)
+  - `LoginPage` (`/login`)
+  - `RegisterPage` (`/register`)
+  - `NotFoundPage` (`*`)
+- Wrapped route switch with `<Suspense>` providing a dedicated `<PageLoader />` fallback component with spinner animation and light/dark theme support
+- Verified chunk generation and recorded before/after build metrics
+
+#### Bundle Performance Comparison (Before vs. After)
+
+| Metric | Before (Monolithic Bundle) | After (Lazy Loaded / Code-Split) | Improvement / Difference |
+|---|---|---|---|
+| **Main JS Bundle Size** | `247.85 kB` (`78.45 kB` gzip) | `237.00 kB` (`76.01 kB` gzip) | **-10.85 kB** initial payload reduction |
+| **Main CSS Bundle Size** | `14.98 kB` (`3.80 kB` gzip) | `12.09 kB` (`3.32 kB` gzip) | **-2.89 kB** initial CSS reduction |
+| **Route Chunks Count** | 1 single JS file | 9 split on-demand JS chunks | Separate chunks per route |
+| **`Home` Chunk** | Bundled in main | `2.02 kB` (`0.85 kB` gzip) | Downloaded on `/` |
+| **`ProjectsPage` Chunk** | Bundled in main | `2.01 kB` (`0.94 kB` gzip) | Downloaded on `/projects` |
+| **`TasksPage` Chunk** | Bundled in main | `3.88 kB` (`1.54 kB` gzip) | Downloaded on `/tasks` |
+| **`LoginPage` Chunk** | Bundled in main | `1.72 kB` (`0.73 kB` gzip) | Downloaded on `/login` |
+| **`RegisterPage` Chunk** | Bundled in main | `2.16 kB` (`0.83 kB` gzip) | Downloaded on `/register` |
+| **`ContactPage` Chunk** | Bundled in main | `1.23 kB` (`0.53 kB` gzip) | Downloaded on `/contact` |
+| **`NotFoundPage` Chunk** | Bundled in main | `0.28 kB` (`0.21 kB` gzip) | Downloaded on 404 routes |
+
+#### Key Analysis & Theory Questions
+
+1. **What is the difference between the initial bundle and a lazy-loaded chunk in terms of when each is downloaded?**
+   - *Initial Bundle:* Downloaded immediately when the user first loads the application (blocking initial render until downloaded and parsed).
+   - *Lazy-Loaded Chunk:* Only requested over the network when the user actually navigates to that specific route/component for the first time.
+2. **Why does lazy loading improve perceived performance even though the total amount of code downloaded eventually stays the same?**
+   - By trimming unused pages from the initial payload, the browser downloads and parses significantly fewer bytes during initial page startup. The Time to Interactive (TTI) and First Contentful Paint (FCP) are greatly reduced, making the app feel instant. Subsequent page chunks are small and download quickly in the background when requested.
+3. **In what situations would lazy loading not be worth the added complexity?**
+   - In very small, single-page apps or micro-sites where the entire bundle is only a few kilobytes (< 50 kB), introducing multiple chunks adds HTTP request overhead and unnecessary `<Suspense>` loading state flicker without measurable performance gains.
+
 
 ## Author
 
