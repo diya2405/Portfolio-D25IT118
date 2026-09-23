@@ -36,14 +36,20 @@ export function getCacheStats(token) {
 export function flushCache(token) {
   return fetch(`${API_BASE}/tasks/cache/flush`, {
     method: 'POST',
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
   }).then(handleResponse);
 }
 
 export function seedDummyTasks(token) {
   return fetch(`${API_BASE}/tasks/seed-dummy`, {
     method: 'POST',
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
   }).then(handleResponse);
 }
 
