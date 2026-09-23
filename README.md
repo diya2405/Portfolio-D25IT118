@@ -45,6 +45,7 @@ src/
 │   ├── ProtectedRoute.jsx    # Route guard for authenticated pages
 │   ├── PageLoader.jsx        # Suspense fallback UI for lazy chunks (Practical 8)
 │   ├── Auth.css              # Styling for Login & Register forms
+│   ├── Cache.css             # Styling for Cache & Performance Dashboard (Practical 9)
 │   ├── Tasks.jsx             # Full-stack task manager (Authenticated)
 │   ├── Tasks.css             # Styling for Tasks & Toast
 │   └── Toast.jsx             # Toast notification component
@@ -55,6 +56,7 @@ src/
 │   ├── ProjectsPage.jsx
 │   ├── ContactPage.jsx
 │   ├── TasksPage.jsx         # Route page wrapper for Tasks
+│   ├── CachePage.jsx         # Interactive Caching & Performance Dashboard (Practical 9)
 │   ├── LoginPage.jsx         # User login page
 │   ├── RegisterPage.jsx      # User registration page
 │   └── NotFoundPage.jsx
@@ -150,9 +152,21 @@ App runs at `http://localhost:5173/`
    - *Lazy-Loaded Chunk:* Only requested over the network when the user actually navigates to that specific route/component for the first time.
 2. **Why does lazy loading improve perceived performance even though the total amount of code downloaded eventually stays the same?**
    - By trimming unused pages from the initial payload, the browser downloads and parses significantly fewer bytes during initial page startup. The Time to Interactive (TTI) and First Contentful Paint (FCP) are greatly reduced, making the app feel instant. Subsequent page chunks are small and download quickly in the background when requested.
-3. **In what situations would lazy loading not be worth the added complexity?**
-   - In very small, single-page apps or micro-sites where the entire bundle is only a few kilobytes (< 50 kB), introducing multiple chunks adds HTTP request overhead and unnecessary `<Suspense>` loading state flicker without measurable performance gains.
+### Practical 9 — In-Memory Caching and Query Optimization
+- Created a dedicated **Cache & Performance Analytics Dashboard** at `/cache` (`CachePage.jsx`, `Cache.css`)
+- **Interactive 3x3 Live Benchmark Tool**: Sends automated 3 uncached vs. 3 cached requests, computes round-trip latency in milliseconds, and displays a live comparison table
+- **Real-Time Telemetry Metrics**: Displays server-side cache hits, misses, hit ratio %, and active RAM keys via `GET /tasks/cache/stats`
+- **Single Fetch Inspector**: Inspects round-trip timing with visual `X-Cache: HIT (green)` and `X-Cache: MISS (orange)` status badges
+- **Dummy Data & Cache Controls**: One-click actions to populate sample tasks in MongoDB and manually flush the server cache to demonstrate cache invalidation
 
+#### Empirical Benchmark Results (Lab Evidence)
+
+| Metric / Reading | Uncached (MongoDB Atlas Query) | Cached (node-cache In-Memory) | Speed Improvement |
+|---|---|---|---|
+| **Sample 1** | `42.43 ms` | `3.89 ms` | **90.8% faster** |
+| **Sample 2** | `35.17 ms` | `3.90 ms` | **88.9% faster** |
+| **Sample 3** | `29.20 ms` | `4.79 ms` | **83.6% faster** |
+| **Average Response Time** | **`35.60 ms`** | **`4.19 ms`** | **88.2% FASTER** |
 
 ## Author
 

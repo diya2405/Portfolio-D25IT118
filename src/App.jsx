@@ -7,7 +7,6 @@ import Footer from "./components/Footer"
 import PageLoader from './components/PageLoader'
 import './App.css'
 
-// Helper: Minimum delay fallback (Practical 8 Supplementary requirement: avoids flicker & enables clear demonstration)
 function lazyWithDelay(importPromise, delay = 800) {
   return lazy(() =>
     Promise.all([
@@ -17,11 +16,12 @@ function lazyWithDelay(importPromise, delay = 800) {
   );
 }
 
-// Practical 8: Route-based Code Splitting using React.lazy()
+// Route-based Code Splitting using React.lazy()
 const Home = lazyWithDelay(() => import('./pages/Home'), 400)
 const ProjectsPage = lazyWithDelay(() => import('./pages/ProjectsPage'), 800)
 const ContactPage = lazyWithDelay(() => import('./pages/ContactPage'), 800)
 const TasksPage = lazyWithDelay(() => import('./pages/TasksPage'), 800)
+const CachePage = lazyWithDelay(() => import('./pages/CachePage'), 600)
 const LoginPage = lazyWithDelay(() => import('./pages/LoginPage'), 600)
 const RegisterPage = lazyWithDelay(() => import('./pages/RegisterPage'), 600)
 const NotFound = lazyWithDelay(() => import('./pages/NotFoundPage'), 400)
@@ -39,6 +39,11 @@ function App() {
           <Route path="/tasks" element={
             <ProtectedRoute>
               <TasksPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/cache" element={
+            <ProtectedRoute>
+              <CachePage />
             </ProtectedRoute>
           } />
           <Route path="/contact" element={<ContactPage />} />
