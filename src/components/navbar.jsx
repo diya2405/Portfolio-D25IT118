@@ -25,6 +25,7 @@ function Navbar() {
         <li><NavLink to="/contact">Contact</NavLink></li>
         <li><NavLink to="/tasks">Tasks</NavLink></li>
         {token && <li><NavLink to="/cache">Cache Demo</NavLink></li>}
+        {token && <li><NavLink to="/events">Events</NavLink></li>}
         {token ? (
           <li>
             <button className="nav-logout" onClick={handleLogout}>

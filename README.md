@@ -46,6 +46,7 @@ src/
 │   ├── PageLoader.jsx        # Suspense fallback UI for lazy chunks (Practical 8)
 │   ├── Auth.css              # Styling for Login & Register forms
 │   ├── Cache.css             # Styling for Cache & Performance Dashboard (Practical 9)
+│   ├── Events.css            # Styling for Async Event Inspector (Practical 10)
 │   ├── Tasks.jsx             # Full-stack task manager (Authenticated)
 │   ├── Tasks.css             # Styling for Tasks & Toast
 │   └── Toast.jsx             # Toast notification component
@@ -57,6 +58,7 @@ src/
 │   ├── ContactPage.jsx
 │   ├── TasksPage.jsx         # Route page wrapper for Tasks
 │   ├── CachePage.jsx         # Interactive Caching & Performance Dashboard (Practical 9)
+│   ├── EventsPage.jsx        # Asynchronous Event Inspector (Practical 10)
 │   ├── LoginPage.jsx         # User login page
 │   ├── RegisterPage.jsx      # User registration page
 │   └── NotFoundPage.jsx
@@ -168,7 +170,31 @@ App runs at `http://localhost:5173/`
 | **Sample 3** | `29.20 ms` | `4.79 ms` | **83.6% faster** |
 | **Average Response Time** | **`35.60 ms`** | **`4.19 ms`** | **88.2% FASTER** |
 
+### Practical 10 — Asynchronous Processing with Event-Driven Architecture
+- Created a dedicated **Async Event Inspector** at `/events` (`EventsPage.jsx`, `Events.css`)
+- **Native Event-Driven Architecture**: Powered by Node.js built-in `EventEmitter` with zero external queue dependencies
+- **Non-Blocking Execution Proof**:
+  - The HTTP endpoint responds immediately to client (`201 Created` / `200 OK`) in **~50ms**
+  - Background workers handle asynchronous side-effects (simulated email notifications taking 1500ms and audit trails taking 1000ms) without delaying or blocking the client
+- **Live Event Audit Buffer**: Displays real-time event logs fetched from `GET /tasks/events/log` with worker delay, event type, and payload details
+- **Interactive Verification**: "+ Trigger Test Event" dispatches a task event and captures immediate HTTP latency side-by-side with delayed worker completion
+
+#### Non-Blocking Timing Proof (Lab Evidence)
+
+| Operation | HTTP Client Response Time | Background Worker Completion Time | Non-Blocking Verification |
+|---|---|---|---|
+| **POST /tasks (`task-created`)** | **`55.79 ms`** (`2026-10-07T15:51:15.997Z`) | `2026-10-07T15:51:17.499Z` (+1502 ms) | Response delivered **1.5s before** worker completed |
+| **DELETE /tasks/:id (`task-deleted`)** | **`65.46 ms`** (`2026-10-07T15:51:18.065Z`) | `2026-10-07T15:51:19.080Z` (+1015 ms) | Response delivered **1.0s before** worker completed |
+
+#### Key Analysis & Theory Questions
+
+1. **Why is emitting an event preferable to running slow operations synchronously in the route handler?**
+   - In Node.js, the event loop runs on a single main thread. Running slow operations (like sending emails or external webhooks) directly in a route handler blocks the event loop and delays the HTTP response. Emitting an event allows the server to respond immediately (`~50ms`) to the user while processing heavier tasks asynchronously in the background.
+2. **What happens if an EventEmitter emits an `error` event with no listener registered?**
+   - In Node.js, if an `EventEmitter` instance emits an `'error'` event and has no listeners registered for `'error'`, Node.js treats it as an unhandled exception: it prints the stack trace and **crashes the entire process**. Registering a dedicated `taskEvents.on('error', ...)` handler prevents unhandled process crashes.
+
 ## Author
 
 **Diya Shah** — B.Tech IT, CSPIT, CHARUSAT University  
 [GitHub](https://github.com/diya2405)
+
