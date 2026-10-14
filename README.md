@@ -46,7 +46,6 @@ src/
 │   ├── PageLoader.jsx        # Suspense fallback UI for lazy chunks (Practical 8)
 │   ├── Auth.css              # Styling for Login & Register forms
 │   ├── Cache.css             # Styling for Cache & Performance Dashboard (Practical 9)
-│   ├── Events.css            # Styling for Async Event Inspector (Practical 10)
 │   ├── Tasks.jsx             # Full-stack task manager (Authenticated)
 │   ├── Tasks.css             # Styling for Tasks & Toast
 │   └── Toast.jsx             # Toast notification component
@@ -58,7 +57,6 @@ src/
 │   ├── ContactPage.jsx
 │   ├── TasksPage.jsx         # Route page wrapper for Tasks
 │   ├── CachePage.jsx         # Interactive Caching & Performance Dashboard (Practical 9)
-│   ├── EventsPage.jsx        # Asynchronous Event Inspector (Practical 10)
 │   ├── LoginPage.jsx         # User login page
 │   ├── RegisterPage.jsx      # User registration page
 │   └── NotFoundPage.jsx
@@ -171,13 +169,11 @@ App runs at `http://localhost:5173/`
 | **Average Response Time** | **`35.60 ms`** | **`4.19 ms`** | **88.2% FASTER** |
 
 ### Practical 10 — Asynchronous Processing with Event-Driven Architecture
-- Created a dedicated **Async Event Inspector** at `/events` (`EventsPage.jsx`, `Events.css`)
-- **Native Event-Driven Architecture**: Powered by Node.js built-in `EventEmitter` with zero external queue dependencies
+- **Backend Architecture**: Implemented in [`task-manager-api-D25IT118`](https://github.com/diya2405/task-manager-api-D25IT118) using Node.js built-in `EventEmitter` (`events.js`, `listeners.js`) without external dependencies
 - **Non-Blocking Execution Proof**:
-  - The HTTP endpoint responds immediately to client (`201 Created` / `200 OK`) in **~50ms**
-  - Background workers handle asynchronous side-effects (simulated email notifications taking 1500ms and audit trails taking 1000ms) without delaying or blocking the client
-- **Live Event Audit Buffer**: Displays real-time event logs fetched from `GET /tasks/events/log` with worker delay, event type, and payload details
-- **Interactive Verification**: "+ Trigger Test Event" dispatches a task event and captures immediate HTTP latency side-by-side with delayed worker completion
+  - The HTTP endpoint responds immediately to client (`201 Created` / `200 OK`) in **~35ms**
+  - Background notification worker processes asynchronously via the event loop with an artificial 2-second delay without delaying or blocking the client response
+- **Verified via Server Console & Postman**: Confirmed timestamp ordering where API response is logged before listener completion
 
 #### Non-Blocking Timing Proof (Lab Evidence)
 

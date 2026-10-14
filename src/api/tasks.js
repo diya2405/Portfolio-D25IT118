@@ -82,18 +82,3 @@ export function deleteTask(token, id) {
   }).then(handleResponse);
 }
 
-export function getEventLogs(token) {
-  return fetch(`${API_BASE}/tasks/events/log`, {
-    headers: { Authorization: `Bearer ${token}` },
-  }).then(handleResponse);
-}
-
-export function clearEventLogs(token) {
-  return fetch(`${API_BASE}/tasks/events/clear`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  }).then(handleResponse);
-}

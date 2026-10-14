@@ -22,7 +22,6 @@ const ProjectsPage = lazyWithDelay(() => import('./pages/ProjectsPage'), 800)
 const ContactPage = lazyWithDelay(() => import('./pages/ContactPage'), 800)
 const TasksPage = lazyWithDelay(() => import('./pages/TasksPage'), 800)
 const CachePage = lazyWithDelay(() => import('./pages/CachePage'), 600)
-const EventsPage = lazyWithDelay(() => import('./pages/EventsPage'), 600)
 const LoginPage = lazyWithDelay(() => import('./pages/LoginPage'), 600)
 const RegisterPage = lazyWithDelay(() => import('./pages/RegisterPage'), 600)
 const NotFound = lazyWithDelay(() => import('./pages/NotFoundPage'), 400)
@@ -45,11 +44,6 @@ function App() {
           <Route path="/cache" element={
             <ProtectedRoute>
               <CachePage />
-            </ProtectedRoute>
-          } />
-          <Route path="/events" element={
-            <ProtectedRoute>
-              <EventsPage />
             </ProtectedRoute>
           } />
           <Route path="/contact" element={<ContactPage />} />
