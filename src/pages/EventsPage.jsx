@@ -7,7 +7,6 @@ import '../components/Events.css';
 function EventsPage() {
   const { token } = useAuth();
   const [logs, setLogs] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [lastDemo, setLastDemo] = useState(null);
   const [toast, setToast] = useState({ message: '', type: 'success' });
@@ -21,7 +20,8 @@ function EventsPage() {
     if (!token) return;
     try {
       const data = await getEventLogs(token);
-      setLogs(data?.logs || []);
+      const list = Array.isArray(data) ? data : (data?.logs || []);
+      setLogs(list);
     } catch {
       // fallback
     }
@@ -45,21 +45,21 @@ function EventsPage() {
 
       setLastDemo({
         apiResponseMs: apiDuration,
-        workerDelayMs: 1500,
+        workerDelayMs: 2000,
         taskTitle: taskData.title,
         triggeredAt: new Date().toLocaleTimeString(),
       });
 
       showToast(`API responded in ${apiDuration}ms (Worker running in background...)`, 'info');
 
-      // Fetch immediately to show event captured
+      // Refresh immediately to show initial state
       await loadLogs();
 
-      // Poll after 2s to show completed worker log
+      // Poll after background notification finishes (2000ms delay)
       setTimeout(async () => {
         await loadLogs();
-        showToast('Background notification worker finished (+1500ms)', 'success');
-      }, 2000);
+        showToast('Background notification worker completed (+2000ms)', 'success');
+      }, 2200);
     } catch (err) {
       showToast(err.message, 'error');
     } finally {
@@ -82,8 +82,8 @@ function EventsPage() {
     }
   }
 
-  const createdCount = logs.filter((l) => l.event === 'task-created').length;
-  const deletedCount = logs.filter((l) => l.event === 'task-deleted').length;
+  const createdCount = logs.filter((l) => (l.event || l.type) === 'task-created').length;
+  const deletedCount = logs.filter((l) => (l.event || l.type) === 'task-deleted').length;
 
   return (
     <div className="container">
@@ -132,7 +132,7 @@ function EventsPage() {
               <div className="demo-metric-title">Background Notification Worker</div>
               <div className="demo-metric-val">~{lastDemo.workerDelayMs} ms</div>
               <div className="demo-metric-desc">
-                Async listener processed without delaying client response
+                Async listener processed via event loop without delaying client
               </div>
             </div>
           </div>
@@ -175,35 +175,42 @@ function EventsPage() {
                 <tr>
                   <th>Timestamp</th>
                   <th>Event</th>
-                  <th>Worker Latency</th>
+                  <th>Worker Delay</th>
                   <th>Task Title / ID</th>
                   <th>Status</th>
                 </tr>
               </thead>
               <tbody>
-                {logs.map((item, idx) => (
-                  <tr key={idx}>
-                    <td>{new Date(item.timestamp).toLocaleTimeString()}</td>
-                    <td>
-                      <span
-                        className={`event-tag ${
-                          item.event === 'task-created'
-                            ? 'created'
-                            : item.event === 'task-deleted'
-                            ? 'deleted'
-                            : 'other'
-                        }`}
-                      >
-                        {item.event}
-                      </span>
-                    </td>
-                    <td>{item.durationMs ?? 0} ms</td>
-                    <td>{item.data?.title || item.data?.taskId || '—'}</td>
-                    <td>
-                      <span style={{ color: '#16a34a', fontWeight: 600 }}>✓ COMPLETED</span>
-                    </td>
-                  </tr>
-                ))}
+                {logs.map((item, idx) => {
+                  const eventName = item.event || item.type || 'event';
+                  const title = item.taskTitle || item.data?.title || item.taskId || item.data?.taskId || '—';
+                  const duration = item.durationMs || item.delayMs || 0;
+                  return (
+                    <tr key={idx}>
+                      <td>{new Date(item.timestamp || item.receivedAt).toLocaleTimeString()}</td>
+                      <td>
+                        <span
+                          className={`event-tag ${
+                            eventName === 'task-created'
+                              ? 'created'
+                              : eventName === 'task-deleted'
+                              ? 'deleted'
+                              : 'other'
+                          }`}
+                        >
+                          {eventName}
+                        </span>
+                      </td>
+                      <td>{duration} ms</td>
+                      <td>{title}</td>
+                      <td>
+                        <span style={{ color: item.status === 'FAILED' ? '#ef4444' : '#16a34a', fontWeight: 600 }}>
+                          {item.status === 'FAILED' ? '✕ FAILED' : '✓ COMPLETED'}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           )}
