@@ -1,194 +1,408 @@
-/* ===== Events Dashboard (events.live) ===== */
+/* ========================================================
+   Practical 10: Event Desk & Live Pipeline Styles
+   ======================================================== */
 
-.events-section {
-  max-width: 800px;
+.event-desk-container {
+  max-width: 1140px;
   margin: 2.5rem auto;
-  padding: 2rem 2.5rem;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  padding: 0 1.5rem;
 }
 
-body.dark .events-section {
-  box-shadow: none;
-  background: var(--panel);
-}
-
-.events-header {
-  margin-bottom: 1.25rem;
-}
-
-.events-label {
-  display: inline-block;
-  font-family: 'Fira Code', monospace;
-  font-size: 0.85rem;
-  color: var(--accent2);
-  border-bottom: 2px solid var(--accent2);
-  padding-bottom: 0.3rem;
-}
-
-/* Minimalist inline stats bar */
-.events-stats-bar {
+/* Page Header */
+.event-desk-header {
   display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
   flex-wrap: wrap;
-  gap: 1.5rem;
-  padding: 0.8rem 1rem;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  margin-bottom: 1.5rem;
-  font-family: 'Fira Code', monospace;
-  font-size: 0.85rem;
+  gap: 1rem;
 }
 
-.events-stat-item {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
+.event-desk-header h1 {
+  font-size: 2.3rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 0.35rem 0;
+  letter-spacing: -0.6px;
+  line-height: 1.15;
+}
+
+.event-desk-header p {
+  font-size: 0.96rem;
   color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
 }
 
-.events-stat-item strong {
-  color: var(--accent);
-  font-weight: 600;
-}
-
-/* Minimalist Button Toolbar */
-.events-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  margin-bottom: 1.5rem;
-}
-
-.events-action-btn {
-  padding: 0.55rem 1.1rem;
-  border-radius: 8px;
-  font-family: 'Fira Code', monospace;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.2s, transform 0.15s;
+.live-updates-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 9999px;
+  background: var(--panel);
   border: 1px solid var(--border);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse-green {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+/* Two-Column Grid */
+.event-desk-grid {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 1.75rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .event-desk-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Left Card: Enter an event */
+.event-form-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.75rem;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+}
+
+.event-form-card h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 1.25rem 0;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
   background: var(--bg);
   color: var(--text);
+  font-size: 0.88rem;
+  font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.events-action-btn:hover:not(:disabled) {
-  border-color: var(--accent);
-  color: var(--accent);
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #0f766e;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.15);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 90px;
+  gap: 0.75rem;
+}
+
+.submit-entry-btn {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.submit-entry-btn:hover:not(:disabled) {
+  background: #1e293b;
   transform: translateY(-1px);
 }
 
-.events-action-btn.primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-}
-
-.events-action-btn.primary:hover:not(:disabled) {
-  opacity: 0.9;
-  color: #fff;
-}
-
-.events-action-btn.danger {
-  border-color: #e8664c;
-  color: #e8664c;
-}
-
-.events-action-btn.danger:hover:not(:disabled) {
-  background: #e8664c;
-  color: #fff;
-}
-
-.events-action-btn:disabled {
-  opacity: 0.45;
+.submit-entry-btn:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
   transform: none;
 }
 
-/* Minimalist Result Box */
-.events-result-box {
+body.dark .submit-entry-btn {
+  background: #2563eb;
+}
+
+body.dark .submit-entry-btn:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+/* Feedback Status Alert Boxes */
+.entry-status-alert {
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  margin-top: 1rem;
+  animation: fadeIn 0.25s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.entry-status-alert.received {
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  color: #92400e;
+}
+
+body.dark .entry-status-alert.received {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.3);
+  color: #fbbf24;
+}
+
+.entry-status-alert.confirmed {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+}
+
+body.dark .entry-status-alert.confirmed {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #34d399;
+}
+
+.entry-status-alert-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem 0;
+}
+
+.entry-status-alert-desc {
+  font-size: 0.8rem;
+  margin: 0;
+  line-height: 1.45;
+  opacity: 0.95;
+}
+
+/* Right Card: Live pipeline */
+.pipeline-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.75rem;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+}
+
+.pipeline-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.8rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.pipeline-card-header h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+.pipeline-reset-link {
+  font-size: 0.78rem;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.pipeline-reset-link:hover {
+  color: #e8664c;
+  background: rgba(232, 102, 76, 0.08);
+}
+
+/* Three Pipeline Lanes */
+.pipeline-lanes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 680px) {
+  .pipeline-lanes {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pipeline-lane {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
-  font-family: 'Fira Code', monospace;
+  border-radius: 12px;
+  padding: 1rem;
+  min-height: 330px;
+  display: flex;
+  flex-direction: column;
+}
+
+.pipeline-lane.waiting {
+  border-top: 3.5px solid #f59e0b;
+}
+
+.pipeline-lane.processing {
+  border-top: 3.5px solid #0f766e;
+}
+
+.pipeline-lane.confirmed {
+  border-top: 3.5px solid #10b981;
+}
+
+.pipeline-lane-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.3rem;
+}
+
+.pipeline-lane-title {
   font-size: 0.85rem;
-}
-
-/* Minimalist Table */
-.events-table-wrapper {
-  overflow-x: auto;
-  margin-top: 1rem;
-}
-
-.events-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.85rem;
-}
-
-.events-table th {
-  padding: 0.6rem 0.8rem;
-  text-align: left;
-  font-family: 'Fira Code', monospace;
-  font-size: 0.75rem;
-  color: var(--muted);
-  border-bottom: 1.5px solid var(--border);
-}
-
-.events-table td {
-  padding: 0.65rem 0.8rem;
-  border-bottom: 1px solid var(--border);
-  color: var(--text);
-  font-family: 'Fira Code', monospace;
-  vertical-align: middle;
-}
-
-.event-tag {
-  display: inline-block;
-  padding: 0.2rem 0.55rem;
-  border-radius: 6px;
   font-weight: 700;
-  font-size: 0.75rem;
+  color: var(--text);
 }
 
-.event-tag.created {
-  background: rgba(34, 197, 94, 0.15);
-  color: #16a34a;
-  border: 1px solid #22c55e;
-}
-
-body.dark .event-tag.created {
-  color: #4ade80;
-}
-
-.event-tag.deleted {
-  background: rgba(239, 68, 68, 0.15);
-  color: #dc2626;
-  border: 1px solid #ef4444;
-}
-
-body.dark .event-tag.deleted {
-  color: #f87171;
-}
-
-.event-tag.other {
-  background: rgba(99, 102, 241, 0.15);
-  color: #6366f1;
-  border: 1px solid #818cf8;
-}
-
-.events-empty {
-  text-align: center;
-  padding: 2.5rem;
+.pipeline-lane-count {
+  font-size: 0.82rem;
+  font-weight: 700;
   color: var(--muted);
+}
+
+.pipeline-empty-text {
+  font-size: 0.8rem;
+  color: var(--muted);
+  padding: 0.75rem 0;
+  margin: 0;
+}
+
+/* Pipeline Item Ticket */
+.pipeline-item {
+  background: var(--panel);
+  border-radius: 10px;
+  padding: 0.8rem 0.9rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  transition: transform 0.15s;
+  animation: fadeIn 0.25s ease-in-out;
+}
+
+.pipeline-item:hover {
+  transform: translateY(-1px);
+}
+
+.pipeline-item.processing {
+  border: 1.5px solid #0d9488;
+}
+
+.pipeline-item.confirmed {
+  border: 1.5px solid #10b981;
+}
+
+.pipeline-item-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 0.15rem 0;
+}
+
+.pipeline-item-sub {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin: 0 0 0.2rem 0;
   font-family: 'Fira Code', monospace;
-  font-size: 0.85rem;
+}
+
+.pipeline-item-meta {
+  font-size: 0.76rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+.pipeline-ticket-code {
+  display: inline-block;
+  margin-top: 0.35rem;
+  font-family: 'Fira Code', monospace;
+  font-weight: 700;
+  color: #059669;
+  font-size: 0.84rem;
+  letter-spacing: 0.5px;
+}
+
+body.dark .pipeline-ticket-code {
+  color: #34d399;
+}
+
+/* Bottom Telemetry Bar for Viva / Lab Proof */
+.pipeline-telemetry-box {
+  margin-top: 1.5rem;
+  padding: 0.85rem 1.25rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.telemetry-tag {
+  font-family: 'Fira Code', monospace;
+  color: #0d9488;
+  font-weight: 600;
+}
+
+body.dark .telemetry-tag {
+  color: #2dd4bf;
 }

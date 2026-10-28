@@ -1,14 +1,25 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { getEventLogs, clearEventLogs, createTask } from '../api/tasks';
+import { registerEventEntry, getEventPipeline, resetEventPipeline } from '../api/tasks';
 import Toast from '../components/Toast';
 import '../components/Events.css';
 
 function EventsPage() {
-  const { token } = useAuth();
-  const [logs, setLogs] = useState([]);
-  const [actionLoading, setActionLoading] = useState(false);
-  const [lastTrigger, setLastTrigger] = useState(null);
+  const [formData, setFormData] = useState({
+    name: 'Harsh Shah',
+    email: 'harsh@example.com',
+    event: 'Workshop',
+    seats: 1,
+    rollNo: 'D25IT124',
+  });
+
+  const [pipeline, setPipeline] = useState({
+    waiting: [],
+    processing: [],
+    confirmed: [],
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentSubmission, setCurrentSubmission] = useState(null);
   const [toast, setToast] = useState({ message: '', type: 'success' });
 
   function showToast(message, type = 'success') {
@@ -16,185 +27,267 @@ function EventsPage() {
     setTimeout(() => setToast({ message: '', type: 'success' }), 2500);
   }
 
-  const loadLogs = useCallback(async () => {
-    if (!token) return;
+  // Fetch current live pipeline state
+  const fetchPipeline = useCallback(async () => {
     try {
-      const data = await getEventLogs(token);
-      setLogs(Array.isArray(data) ? data : (data?.logs || []));
+      const data = await getEventPipeline();
+      if (data) {
+        setPipeline({
+          waiting: data.waiting || [],
+          processing: data.processing || [],
+          confirmed: data.confirmed || [],
+        });
+
+        // Check if current tracked submission got confirmed
+        if (currentSubmission && currentSubmission.status !== 'confirmed') {
+          const match = (data.confirmed || []).find((c) => c.id === currentSubmission.id);
+          if (match) {
+            setCurrentSubmission(match);
+            showToast(`Confirmed ticket generated: ${match.ticketCode}`, 'success');
+          }
+        }
+      }
     } catch {
-      // fallback
+      // Offline fallback
     }
-  }, [token]);
+  }, [currentSubmission]);
 
+  // Initial fetch and live poll every 1 second (Live updates on)
   useEffect(() => {
-    loadLogs();
-  }, [loadLogs]);
+    const prevTitle = document.title;
+    document.title = "Event Desk";
+    fetchPipeline();
+    const interval = setInterval(fetchPipeline, 1000);
+    return () => {
+      document.title = prevTitle;
+      clearInterval(interval);
+    };
+  }, [fetchPipeline]);
 
-  async function handleTriggerEvent() {
-    if (!token) return;
-    setActionLoading(true);
+  // Handle Submit entry
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (!formData.name.trim() || !formData.email.trim()) {
+      showToast('Please provide your name and email', 'error');
+      return;
+    }
+
+    setIsSubmitting(true);
     const start = performance.now();
+
     try {
-      const randomNum = Math.floor(100 + Math.random() * 900);
-      const taskData = {
-        title: `Async Task #${randomNum}`,
-        description: 'Demonstrating Node.js EventEmitter non-blocking dispatch',
-      };
-      await createTask(token, taskData);
+      const res = await registerEventEntry(formData);
       const apiDuration = Math.round(performance.now() - start);
 
-      setLastTrigger({
-        apiResponseMs: apiDuration,
-        workerDelayMs: 2000,
-        taskTitle: taskData.title,
-      });
+      if (res && res.entry) {
+        setCurrentSubmission(res.entry);
+        showToast(`Entry received in ${apiDuration}ms (Confirming in background...)`, 'info');
+      }
 
-      showToast(`API responded in ${apiDuration}ms (Worker running in background...)`, 'info');
-
-      // Refresh immediately
-      await loadLogs();
-
-      // Poll after background notification worker finishes (2000ms delay)
-      setTimeout(async () => {
-        await loadLogs();
-        showToast('Background notification worker completed (+2000ms)', 'success');
-      }, 2200);
+      await fetchPipeline();
     } catch (err) {
-      showToast(err.message, 'error');
+      showToast(err.message || 'Failed to submit entry', 'error');
     } finally {
-      setActionLoading(false);
+      setIsSubmitting(false);
     }
   }
 
-  async function handleClear() {
-    if (!token) return;
-    setActionLoading(true);
+  // Reset pipeline
+  async function handleReset() {
     try {
-      await clearEventLogs(token);
-      showToast('Event logs cleared', 'success');
-      setLastTrigger(null);
-      await loadLogs();
+      await resetEventPipeline();
+      setCurrentSubmission(null);
+      await fetchPipeline();
+      showToast('Live pipeline cleared', 'info');
     } catch (err) {
       showToast(err.message, 'error');
-    } finally {
-      setActionLoading(false);
     }
   }
-
-  const createdCount = logs.filter((l) => (l.event || l.type) === 'task-created').length;
-  const deletedCount = logs.filter((l) => (l.event || l.type) === 'task-deleted').length;
 
   return (
-    <div className="container">
+    <div className="event-desk-container">
       {toast.message && <Toast message={toast.message} type={toast.type} />}
 
-      <section className="events-section">
-        <div className="events-header">
-          <span className="events-label">events.live</span>
+      {/* Header */}
+      <header className="event-desk-header">
+        <div>
+          <h1>Event Desk</h1>
+          <p>Register in seconds. Your entry is accepted right away and confirmed in the background.</p>
         </div>
-
-        {/* Minimalist Stats Bar */}
-        <div className="events-stats-bar">
-          <div className="events-stat-item">Total: <strong>{logs.length}</strong></div>
-          <div className="events-stat-item">task-created: <strong>{createdCount}</strong></div>
-          <div className="events-stat-item">task-deleted: <strong>{deletedCount}</strong></div>
-          <div className="events-stat-item">Engine: <strong>Node.js EventEmitter</strong></div>
+        <div className="live-updates-pill">
+          <span className="live-dot"></span>
+          Live updates on
         </div>
+      </header>
 
-        {/* Action Toolbar */}
-        <div className="events-toolbar">
-          <button
-            className="events-action-btn primary"
-            onClick={handleTriggerEvent}
-            disabled={actionLoading}
-          >
-            {actionLoading ? 'Triggering…' : '+ Trigger Task Event'}
-          </button>
-          <button
-            className="events-action-btn"
-            onClick={loadLogs}
-            disabled={actionLoading}
-          >
-            ↻ Refresh
-          </button>
-          <button
-            className="events-action-btn danger"
-            onClick={handleClear}
-            disabled={actionLoading || logs.length === 0}
-          >
-            ✕ Clear Logs
-          </button>
-        </div>
-
-        {/* Non-Blocking Proof Result Box */}
-        {lastTrigger && (
-          <div className="events-result-box">
-            <div>
-              <span>API Response: </span>
-              <strong style={{ color: '#16a34a' }}>{lastTrigger.apiResponseMs} ms</strong>
-              <span style={{ color: 'var(--muted)', fontSize: '0.78rem' }}> (201 Created sent instantly)</span>
+      {/* Main Grid: Form (Left) & Pipeline (Right) */}
+      <div className="event-desk-grid">
+        {/* Left Column: Enter an event */}
+        <section className="event-form-card">
+          <h2>Enter an event</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label>Full name</label>
+              <input
+                type="text"
+                value={formData.name}
+                placeholder="Asha Patel"
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                required
+              />
             </div>
-            <div>
-              <span>Worker Delay: </span>
-              <strong>~{lastTrigger.workerDelayMs} ms</strong>
-              <span style={{ color: 'var(--muted)', fontSize: '0.78rem' }}> (Async background)</span>
+
+            <div className="form-group">
+              <label>Email</label>
+              <input
+                type="email"
+                value={formData.email}
+                placeholder="asha@example.com"
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Event</label>
+                <select
+                  value={formData.event}
+                  onChange={(e) => setFormData({ ...formData, event: e.target.value })}
+                >
+                  <option value="Workshop">Workshop</option>
+                  <option value="Seminar">Seminar</option>
+                  <option value="Hackathon">Hackathon</option>
+                  <option value="Conference">Conference</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>Seats</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="10"
+                  value={formData.seats}
+                  onChange={(e) => setFormData({ ...formData, seats: e.target.value })}
+                  required
+                />
+              </div>
+            </div>
+
+            <button type="submit" className="submit-entry-btn" disabled={isSubmitting}>
+              {isSubmitting ? 'Submitting…' : 'Submit entry'}
+            </button>
+          </form>
+
+          {/* Feedback Status Alert */}
+          {currentSubmission && currentSubmission.status !== 'confirmed' && (
+            <div className="entry-status-alert received">
+              <div className="entry-status-alert-title">Entry received</div>
+              <p className="entry-status-alert-desc">
+                You can leave this page open. We will update it as soon as it is confirmed.
+              </p>
+            </div>
+          )}
+
+          {currentSubmission && currentSubmission.status === 'confirmed' && (
+            <div className="entry-status-alert confirmed">
+              <div className="entry-status-alert-title">
+                Confirmed: {currentSubmission.ticketCode}
+              </div>
+              <p className="entry-status-alert-desc">
+                Your ticket is ready. Keep this code.
+              </p>
+            </div>
+          )}
+        </section>
+
+        {/* Right Column: Live pipeline */}
+        <section className="pipeline-card">
+          <div className="pipeline-card-header">
+            <h2>Live pipeline</h2>
+            <button className="pipeline-reset-link" onClick={handleReset} title="Clear all tickets">
+              ↺ Reset pipeline
+            </button>
+          </div>
+
+          <div className="pipeline-lanes">
+            {/* Lane 1: Waiting in line */}
+            <div className="pipeline-lane waiting">
+              <div className="pipeline-lane-header">
+                <span className="pipeline-lane-title">Waiting in line</span>
+                <span className="pipeline-lane-count">{pipeline.waiting.length}</span>
+              </div>
+              {pipeline.waiting.length === 0 ? (
+                <p className="pipeline-empty-text">Nothing here right now.</p>
+              ) : (
+                pipeline.waiting.map((item) => (
+                  <div className="pipeline-item waiting" key={item.id}>
+                    <div className="pipeline-item-name">{item.name}</div>
+                    <div className="pipeline-item-sub">{item.rollNo || 'D25IT124'}</div>
+                    <div className="pipeline-item-meta">
+                      {item.event}, {item.seats} seat{item.seats > 1 ? 's' : ''}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Lane 2: Being processed */}
+            <div className="pipeline-lane processing">
+              <div className="pipeline-lane-header">
+                <span className="pipeline-lane-title">Being processed</span>
+                <span className="pipeline-lane-count">{pipeline.processing.length}</span>
+              </div>
+              {pipeline.processing.length === 0 ? (
+                <p className="pipeline-empty-text">Nothing here right now.</p>
+              ) : (
+                pipeline.processing.map((item) => (
+                  <div className="pipeline-item processing" key={item.id}>
+                    <div className="pipeline-item-name">{item.name}</div>
+                    <div className="pipeline-item-sub">{item.rollNo || 'D25IT124'}</div>
+                    <div className="pipeline-item-meta">
+                      {item.event}, {item.seats} seat{item.seats > 1 ? 's' : ''}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Lane 3: Confirmed */}
+            <div className="pipeline-lane confirmed">
+              <div className="pipeline-lane-header">
+                <span className="pipeline-lane-title">Confirmed</span>
+                <span className="pipeline-lane-count">{pipeline.confirmed.length}</span>
+              </div>
+              {pipeline.confirmed.length === 0 ? (
+                <p className="pipeline-empty-text">Nothing here right now.</p>
+              ) : (
+                pipeline.confirmed.map((item) => (
+                  <div className="pipeline-item confirmed" key={item.id}>
+                    <div className="pipeline-item-name">{item.name}</div>
+                    <div className="pipeline-item-sub">{item.rollNo || 'D25IT124'}</div>
+                    <div className="pipeline-ticket-code">{item.ticketCode}</div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
-        )}
+        </section>
+      </div>
 
-        {/* Audit Log Table */}
-        <div className="events-table-wrapper">
-          {logs.length === 0 ? (
-            <div className="events-empty">
-              No events recorded yet. Click "+ Trigger Task Event" or create a task to test.
-            </div>
-          ) : (
-            <table className="events-table">
-              <thead>
-                <tr>
-                  <th>Timestamp</th>
-                  <th>Event</th>
-                  <th>Worker Delay</th>
-                  <th>Task Title / ID</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {logs.map((item, idx) => {
-                  const eventName = item.event || item.type || 'event';
-                  const title = item.taskTitle || item.data?.title || item.taskId || item.data?.taskId || '—';
-                  const delay = item.delayMs || item.durationMs || 0;
-                  return (
-                    <tr key={idx}>
-                      <td>{new Date(item.timestamp || item.receivedAt).toLocaleTimeString()}</td>
-                      <td>
-                        <span
-                          className={`event-tag ${
-                            eventName === 'task-created'
-                              ? 'created'
-                              : eventName === 'task-deleted'
-                              ? 'deleted'
-                              : 'other'
-                          }`}
-                        >
-                          {eventName}
-                        </span>
-                      </td>
-                      <td>{delay} ms</td>
-                      <td>{title}</td>
-                      <td>
-                        <span style={{ color: item.status === 'FAILED' ? '#ef4444' : '#16a34a', fontWeight: 600 }}>
-                          {item.status === 'FAILED' ? '✕ FAILED' : '✓ COMPLETED'}
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          )}
+      {/* Telemetry Footer Info */}
+      <footer className="pipeline-telemetry-box">
+        <div>
+          <span>Architecture: </span>
+          <span className="telemetry-tag">Node.js EventEmitter</span>
+          <span> • Immediate 201 Created Response • Non-blocking Background Queue</span>
         </div>
-      </section>
+        <div>
+          <span>Student ID: </span>
+          <span className="telemetry-tag">D25IT118</span>
+        </div>
+      </footer>
     </div>
   );
 }

@@ -83,19 +83,37 @@ export function deleteTask(token, id) {
 }
 
 export function getEventLogs(token) {
-  return fetch(`${API_BASE}/tasks/events/log`, {
-    headers: { Authorization: `Bearer ${token}` },
+  return fetch(`${API_BASE}/events/log`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
   }).then(handleResponse);
 }
 
 export function clearEventLogs(token) {
-  return fetch(`${API_BASE}/tasks/events/clear`, {
+  return fetch(`${API_BASE}/events/clear`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
   }).then(handleResponse);
 }
 
+// Practical 10: Event Desk Pipeline API Calls
+export function registerEventEntry(data) {
+  return fetch(`${API_BASE}/events/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  }).then(handleResponse);
+}
 
+export function getEventPipeline() {
+  return fetch(`${API_BASE}/events/pipeline`).then(handleResponse);
+}
+
+export function resetEventPipeline() {
+  return fetch(`${API_BASE}/events/reset`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  }).then(handleResponse);
+}

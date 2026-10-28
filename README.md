@@ -1,6 +1,6 @@
 # Portfolio-D25IT118
 
-A personal portfolio website built with **React (Vite)**, created as part of the Advanced Web Development Frameworks (ITUE301) coursework at CHARUSAT University. Now integrated end-to-end with a live Node/Express/MongoDB backend for task management (Practical 6).
+A personal portfolio website built with **React (Vite)**, created as part of the Advanced Web Development Frameworks (ITUE301) coursework at CHARUSAT University. Integrated end-to-end with an Express/MongoDB backend, authentication, performance caching, and asynchronous event processing.
 
 🔗 **Live Repo:** [github.com/diya2405/Portfolio-D25IT118](https://github.com/diya2405/Portfolio-D25IT118)  
 🔗 **Backend Repo:** [github.com/diya2405/task-manager-api-D25IT118](https://github.com/diya2405/task-manager-api-D25IT118)
@@ -11,17 +11,18 @@ A personal portfolio website built with **React (Vite)**, created as part of the
 - React Router v6
 - CSS (custom, no framework)
 - Fetch API (for backend integration)
+- Node.js & MongoDB (backend)
 
-## Features
+## Features & Practicals Covered
 
-- Multi-page navigation (Home, Projects, Contact, **Tasks**) with React Router — no full page reloads
-- Reusable, prop-driven components (Header, About, Education, Skills, Projects, Contact, Footer)
-- Controlled form input with live character count on the Contact page
-- State-driven UI toggle (show/hide tip)
-- Live GitHub repository fetch on the Projects page, with loading spinner, error handling + retry, and client-side search
-- **Full CRUD Task Manager** wired to a live MongoDB-backed Express API — create, complete, and delete tasks, all persisted server-side
-- Optimistic UI updates, delete confirmation, and toast notifications for task actions
-- Clean, IDE-inspired UI design
+- **Practical 1 — Component Architecture**: Reusable UI components (Header, About, Education, Skills, Footer)
+- **Practical 2 — Routing & State Management**: Multi-page routing (`/`, `/projects`, `/contact`, `/tasks`, `/cache`, `/events`) with client-side state
+- **Practical 3 — API Integration**: Live GitHub REST API repository fetch with loading spinner, retry logic, and search filter
+- **Practical 6 — Full Stack CRUD**: Connected to MongoDB backend — tasks are persisted, modified, and deleted with toast feedback
+- **Practical 7 — Authentication & Route Guarding**: JWT-based login/registration, token storage in `localStorage`, and `ProtectedRoute`
+- **Practical 8 — Performance Optimization**: Route-based code splitting using `React.lazy()` and `<Suspense>` with custom `<PageLoader />`
+- **Practical 9 — In-Memory Caching & Telemetry**: Interactive caching dashboard (`/cache`) measuring MongoDB query vs. `node-cache` response times
+- **Practical 10 — Event-Driven Architecture (Event Desk)**: Live registration pipeline (`/events`) demonstrating non-blocking `EventEmitter` processing
 
 ## Project Structure
 
@@ -29,7 +30,7 @@ A personal portfolio website built with **React (Vite)**, created as part of the
 src/
 ├── api/
 │   ├── auth.js               # Auth API client (register, login, me)
-│   └── tasks.js              # Central API client for tasks (authenticated)
+│   └── tasks.js              # Central API client (tasks, cache, event pipeline)
 ├── components/
 │   ├── Header.jsx
 │   ├── About.jsx
@@ -41,12 +42,13 @@ src/
 │   ├── Spinner.jsx
 │   ├── Contact.jsx
 │   ├── Footer.jsx
-│   ├── Navbar.jsx            # Dynamic Login/Logout navigation
+│   ├── Navbar.jsx            # Dynamic Navigation
 │   ├── ProtectedRoute.jsx    # Route guard for authenticated pages
-│   ├── PageLoader.jsx        # Suspense fallback UI for lazy chunks (Practical 8)
-│   ├── Auth.css              # Styling for Login & Register forms
-│   ├── Cache.css             # Styling for Cache & Performance Dashboard (Practical 9)
-│   ├── Tasks.jsx             # Full-stack task manager (Authenticated)
+│   ├── PageLoader.jsx        # Suspense fallback UI for lazy chunks
+│   ├── Auth.css              # Styling for Login & Register
+│   ├── Cache.css             # Styling for Cache Dashboard
+│   ├── Events.css            # Styling for Event Desk & Live Pipeline
+│   ├── Tasks.jsx             # Full-stack task manager
 │   ├── Tasks.css             # Styling for Tasks & Toast
 │   └── Toast.jsx             # Toast notification component
 ├── context/
@@ -56,7 +58,8 @@ src/
 │   ├── ProjectsPage.jsx
 │   ├── ContactPage.jsx
 │   ├── TasksPage.jsx         # Route page wrapper for Tasks
-│   ├── CachePage.jsx         # Interactive Caching & Performance Dashboard (Practical 9)
+│   ├── CachePage.jsx         # Caching & Performance Dashboard (Practical 9)
+│   ├── EventsPage.jsx        # Event Desk & Live Pipeline (Practical 10)
 │   ├── LoginPage.jsx         # User login page
 │   ├── RegisterPage.jsx      # User registration page
 │   └── NotFoundPage.jsx
@@ -67,130 +70,61 @@ src/
 
 ## Getting Started
 
-This project requires the backend API running alongside it — see the [backend repo](https://github.com/diya2405/task-manager-api-D25IT118) for setup.
-
 ```bash
+# Clone the repository
 git clone https://github.com/diya2405/Portfolio-D25IT118.git
 cd Portfolio-D25IT118
+
+# Install dependencies
 npm install
+
+# Start Vite dev server
 npm run dev
 ```
 
 App runs at `http://localhost:5173/`
 
-**Note:** For the `/tasks` page to work, the backend must be running separately at `http://localhost:5000` (see backend repo README for setup — `npm start` in `task-manager-api-D25IT118`).
+**Note:** For the backend API, start `task-manager-api-D25IT118` on `http://localhost:5000` (`node server.js`).
 
-## Practicals Covered
+---
 
-### Practical 1 — Component Architecture
-- Static portfolio UI built with 4+ reusable components (Header, About, Skills, Footer)
-- Props used to pass data into components (e.g. `name`, `skillsList`, `projectlist`)
+## Detailed Practical Highlights
 
-### Practical 2 — Routing & State Management
-- Added React Router v6 with 3 routes: `/`, `/projects`, `/contact`
-- `useState` used meaningfully for:
-  - Toggling UI visibility (tip on Contact page)
-  - Controlled form input (message textarea with live character count)
-  - Navigation via `NavLink` — no full page reloads between routes
-
-### Practical 3 — API Integration
-- Fetches live repositories from the GitHub REST API (`/users/diya2405/repos`)
-- No API key required (public, unauthenticated endpoint)
-- Loading state shown via a spinner; failed requests show an error message with a Retry button
-- Includes a client-side search filter over the fetched repo names
-
-### Practical 6 — Full Stack Integration (React + Node + MongoDB)
-- Added a `/tasks` route with a new `Tasks.jsx` component
-- Connected to the Express + MongoDB backend from Practicals 4–5 via a central `src/api/tasks.js` client
-- Full CRUD from the UI: create, mark complete/incomplete, delete — each write operation confirmed against the live database, not assumed
-- **Optimistic UI**: new tasks appear instantly on creation, then reconcile with the server response (rolled back on failure)
-- **Confirmation dialog** before deleting a task
-- **Toast notifications** for success/failure on every operation
-- Loading and error states handled independently for read (`GET`) and write (`POST`/`PUT`/`DELETE`) operations
-- Data persistence verified by refreshing the browser — tasks are read from MongoDB on every mount, not local state
-
-### Practical 7 — Authentication & Middleware Pipeline
-- Integrated JWT authentication with user registration (`/register`) and login (`/login`) flows
-- **AuthContext** manages global authentication state, token storage in `localStorage`, and session verification via `GET /auth/me` on page refresh
-- **Route Guarding (`ProtectedRoute`)**: Unauthenticated attempts to access `/tasks` automatically redirect to `/login`
-- **Session Expiry & 401 Handling**: When an API request fails with status `401 Unauthorized` (e.g., token expired or corrupted), the application displays a toast notification, purges the stale token from state/storage, and redirects to `/login`
-- **Dynamic Navigation (`Navbar.jsx`)**: Displays "Login" when logged out, and a "Logout" action when authenticated that clears the session and returns to Home
-- Every task request now attaches `Authorization: Bearer <token>` in HTTP headers
-- Shared responsive styles (`Auth.css`) with light & dark theme parity matching the IDE-inspired UI
-
-### Practical 8 — Performance Optimization and Lazy Loading in React
-- Implemented **route-based code splitting** across all pages using `React.lazy()` and dynamic `import()`:
-  - `Home` (`/`)
-  - `ProjectsPage` (`/projects`)
-  - `ContactPage` (`/contact`)
-  - `TasksPage` (`/tasks`)
-  - `LoginPage` (`/login`)
-  - `RegisterPage` (`/register`)
-  - `NotFoundPage` (`*`)
-- Wrapped route switch with `<Suspense>` providing a dedicated `<PageLoader />` fallback component with spinner animation and light/dark theme support
-- Verified chunk generation and recorded before/after build metrics
-
-#### Bundle Performance Comparison (Before vs. After)
-
-| Metric | Before (Monolithic Bundle) | After (Lazy Loaded / Code-Split) | Improvement / Difference |
-|---|---|---|---|
-| **Main JS Bundle Size** | `247.85 kB` (`78.45 kB` gzip) | `237.00 kB` (`76.01 kB` gzip) | **-10.85 kB** initial payload reduction |
-| **Main CSS Bundle Size** | `14.98 kB` (`3.80 kB` gzip) | `12.09 kB` (`3.32 kB` gzip) | **-2.89 kB** initial CSS reduction |
-| **Route Chunks Count** | 1 single JS file | 9 split on-demand JS chunks | Separate chunks per route |
-| **`Home` Chunk** | Bundled in main | `2.02 kB` (`0.85 kB` gzip) | Downloaded on `/` |
-| **`ProjectsPage` Chunk** | Bundled in main | `2.01 kB` (`0.94 kB` gzip) | Downloaded on `/projects` |
-| **`TasksPage` Chunk** | Bundled in main | `3.88 kB` (`1.54 kB` gzip) | Downloaded on `/tasks` |
-| **`LoginPage` Chunk** | Bundled in main | `1.72 kB` (`0.73 kB` gzip) | Downloaded on `/login` |
-| **`RegisterPage` Chunk** | Bundled in main | `2.16 kB` (`0.83 kB` gzip) | Downloaded on `/register` |
-| **`ContactPage` Chunk** | Bundled in main | `1.23 kB` (`0.53 kB` gzip) | Downloaded on `/contact` |
-| **`NotFoundPage` Chunk** | Bundled in main | `0.28 kB` (`0.21 kB` gzip) | Downloaded on 404 routes |
-
-#### Key Analysis & Theory Questions
-
-1. **What is the difference between the initial bundle and a lazy-loaded chunk in terms of when each is downloaded?**
-   - *Initial Bundle:* Downloaded immediately when the user first loads the application (blocking initial render until downloaded and parsed).
-   - *Lazy-Loaded Chunk:* Only requested over the network when the user actually navigates to that specific route/component for the first time.
-2. **Why does lazy loading improve perceived performance even though the total amount of code downloaded eventually stays the same?**
-   - By trimming unused pages from the initial payload, the browser downloads and parses significantly fewer bytes during initial page startup. The Time to Interactive (TTI) and First Contentful Paint (FCP) are greatly reduced, making the app feel instant. Subsequent page chunks are small and download quickly in the background when requested.
 ### Practical 9 — In-Memory Caching and Query Optimization
 - Created a dedicated **Cache & Performance Analytics Dashboard** at `/cache` (`CachePage.jsx`, `Cache.css`)
-- **Interactive 3x3 Live Benchmark Tool**: Sends automated 3 uncached vs. 3 cached requests, computes round-trip latency in milliseconds, and displays a live comparison table
-- **Real-Time Telemetry Metrics**: Displays server-side cache hits, misses, hit ratio %, and active RAM keys via `GET /tasks/cache/stats`
-- **Single Fetch Inspector**: Inspects round-trip timing with visual `X-Cache: HIT (green)` and `X-Cache: MISS (orange)` status badges
-- **Dummy Data & Cache Controls**: One-click actions to populate sample tasks in MongoDB and manually flush the server cache to demonstrate cache invalidation
+- **Interactive 3x3 Live Benchmark Tool**: Compares 3 uncached MongoDB queries with 3 cached RAM reads
+- **Empirical Results**: In-memory caching achieves an **88.2% reduction in latency** (from ~35.6ms to ~4.2ms)
 
-#### Empirical Benchmark Results (Lab Evidence)
+### Practical 10 — Asynchronous Processing with Event-Driven Architecture (Event Desk)
+- **Interactive Event Desk at `/events`**:
+  - **Left Form ("Enter an event")**: User enters Full Name, Email, Event, and Seats.
+  - **Immediate 201 Response**: Server accepts entry instantly (`~30ms`) with an "Entry received" notification.
+  - **Decoupled Asynchronous Processing**: Emits `event-desk-entry` on Node's native `EventEmitter`.
+  - **Live Pipeline Visualization**:
+    - **Waiting in line**: Initial queue stage.
+    - **Being processed**: Background worker simulation (~2 seconds).
+    - **Confirmed**: Automatically transitions with generated ticket code (`EVT-XXXXXX`).
+  - **Real-time Updates**: Live polling continuously synchronizes state without refreshing the page.
 
-| Metric / Reading | Uncached (MongoDB Atlas Query) | Cached (node-cache In-Memory) | Speed Improvement |
+#### Lab Evidence: Timestamp Ordering Proof
+
+| Step | Action | Log Timestamp | Timing Analysis |
 |---|---|---|---|
-| **Sample 1** | `42.43 ms` | `3.89 ms` | **90.8% faster** |
-| **Sample 2** | `35.17 ms` | `3.90 ms` | **88.9% faster** |
-| **Sample 3** | `29.20 ms` | `4.79 ms` | **83.6% faster** |
-| **Average Response Time** | **`35.60 ms`** | **`4.19 ms`** | **88.2% FASTER** |
+| 1 | HTTP POST `/events/register` | `05:13:32.246Z` | Request received |
+| 2 | Immediate 201 Response sent | `05:13:32.249Z` | **Response delivered in 3ms** |
+| 3 | Background Listener triggered | `05:13:32.253Z` | Listener offloaded to event loop |
+| 4 | Worker Confirmation finished | `05:13:34.256Z` | **Finished 2.007s later in background** |
 
-### Practical 10 — Asynchronous Processing with Event-Driven Architecture
-- **Backend Architecture**: Implemented in [`task-manager-api-D25IT118`](https://github.com/diya2405/task-manager-api-D25IT118) using Node.js built-in `EventEmitter` (`events.js`, `listeners.js`) without external dependencies
-- **Non-Blocking Execution Proof**:
-  - The HTTP endpoint responds immediately to client (`201 Created` / `200 OK`) in **~35ms**
-  - Background notification worker processes asynchronously via the event loop with an artificial 2-second delay without delaying or blocking the client response
-- **Verified via Server Console & Postman**: Confirmed timestamp ordering where API response is logged before listener completion
+#### Key Analysis Questions
 
-#### Non-Blocking Timing Proof (Lab Evidence)
-
-| Operation | HTTP Client Response Time | Background Worker Completion Time | Non-Blocking Verification |
-|---|---|---|---|
-| **POST /tasks (`task-created`)** | **`55.79 ms`** (`2026-10-07T15:51:15.997Z`) | `2026-10-07T15:51:17.499Z` (+1502 ms) | Response delivered **1.5s before** worker completed |
-| **DELETE /tasks/:id (`task-deleted`)** | **`65.46 ms`** (`2026-10-07T15:51:18.065Z`) | `2026-10-07T15:51:19.080Z` (+1015 ms) | Response delivered **1.0s before** worker completed |
-
-#### Key Analysis & Theory Questions
-
-1. **Why is emitting an event preferable to running slow operations synchronously in the route handler?**
-   - In Node.js, the event loop runs on a single main thread. Running slow operations (like sending emails or external webhooks) directly in a route handler blocks the event loop and delays the HTTP response. Emitting an event allows the server to respond immediately (`~50ms`) to the user while processing heavier tasks asynchronously in the background.
-2. **What happens if an EventEmitter emits an `error` event with no listener registered?**
-   - In Node.js, if an `EventEmitter` instance emits an `'error'` event and has no listeners registered for `'error'`, Node.js treats it as an unhandled exception: it prints the stack trace and **crashes the entire process**. Registering a dedicated `taskEvents.on('error', ...)` handler prevents unhandled process crashes.
+1. **Why does emitting an event not block the API response?**
+   - The HTTP response is completed on the current tick of the call stack. The `EventEmitter` listener registers an asynchronous callback with the libuv event loop timer, allowing the client response to return immediately without waiting for background execution.
+2. **What would happen if this work were executed synchronously inside the route handler?**
+   - The user would be forced to wait for the entire 2000ms delay, degrading the perceived performance and throughput of the server.
+3. **Why is `EventEmitter` suitable for this lab but requires message queues (RabbitMQ/Redis) at scale?**
+   - `EventEmitter` is process-local and in-memory. If the Node process restarts, unhandled events are lost. Scaled production systems require persistent brokers with durability and cross-instance distribution.
 
 ## Author
 
 **Diya Shah** — B.Tech IT, CSPIT, CHARUSAT University  
 [GitHub](https://github.com/diya2405)
-

@@ -16,7 +16,7 @@ function lazyWithDelay(importPromise, delay = 800) {
   );
 }
 
-// Route-based Code Splitting using React.lazy()
+// Route-based Code Splitting using React.lazy() (Practical 8)
 const Home = lazyWithDelay(() => import('./pages/Home'), 400)
 const ProjectsPage = lazyWithDelay(() => import('./pages/ProjectsPage'), 800)
 const ContactPage = lazyWithDelay(() => import('./pages/ContactPage'), 800)
@@ -47,11 +47,7 @@ function App() {
               <CachePage />
             </ProtectedRoute>
           } />
-          <Route path="/events" element={
-            <ProtectedRoute>
-              <EventsPage />
-            </ProtectedRoute>
-          } />
+          <Route path="/events" element={<EventsPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

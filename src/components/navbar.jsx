@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function Navbar() {
-  const [darkMode, setDarkMode] = useState(false); // toggles theme
+  const [darkMode, setDarkMode] = useState(false);
   const { token, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -25,7 +25,7 @@ function Navbar() {
         <li><NavLink to="/contact">Contact</NavLink></li>
         <li><NavLink to="/tasks">Tasks</NavLink></li>
         {token && <li><NavLink to="/cache">Cache Demo</NavLink></li>}
-        {token && <li><NavLink to="/events">Events</NavLink></li>}
+        <li><NavLink to="/events">Events</NavLink></li>
         {token ? (
           <li>
             <button className="nav-logout" onClick={handleLogout}>
@@ -36,10 +36,11 @@ function Navbar() {
           <li><NavLink to="/login">Login</NavLink></li>
         )}
       </ul>
-      <button className="theme-toggle" onClick={() => setDarkMode(!darkMode)}>
+      <button className="theme-toggle" onClick={() => setDarkMode(!darkMode)} aria-label="Toggle theme">
         {darkMode ? "☀️ Light" : "🌙 Dark"}
       </button>
     </nav>
   );
 }
+
 export default Navbar;
