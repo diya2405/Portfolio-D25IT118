@@ -7,25 +7,16 @@ import Footer from "./components/Footer"
 import PageLoader from './components/PageLoader'
 import './App.css'
 
-function lazyWithDelay(importPromise, delay = 800) {
-  return lazy(() =>
-    Promise.all([
-      importPromise(),
-      new Promise((resolve) => setTimeout(resolve, delay))
-    ]).then(([moduleExports]) => moduleExports)
-  );
-}
-
-// Route-based Code Splitting using React.lazy() (Practical 8)
-const Home = lazyWithDelay(() => import('./pages/Home'), 400)
-const ProjectsPage = lazyWithDelay(() => import('./pages/ProjectsPage'), 800)
-const ContactPage = lazyWithDelay(() => import('./pages/ContactPage'), 800)
-const TasksPage = lazyWithDelay(() => import('./pages/TasksPage'), 800)
-const CachePage = lazyWithDelay(() => import('./pages/CachePage'), 600)
-const EventsPage = lazyWithDelay(() => import('./pages/EventsPage'), 600)
-const LoginPage = lazyWithDelay(() => import('./pages/LoginPage'), 600)
-const RegisterPage = lazyWithDelay(() => import('./pages/RegisterPage'), 600)
-const NotFound = lazyWithDelay(() => import('./pages/NotFoundPage'), 400)
+// Fast Route-based Code Splitting using React.lazy() (Practical 8)
+const Home = lazy(() => import('./pages/Home'))
+const ProjectsPage = lazy(() => import('./pages/ProjectsPage'))
+const ContactPage = lazy(() => import('./pages/ContactPage'))
+const TasksPage = lazy(() => import('./pages/TasksPage'))
+const CachePage = lazy(() => import('./pages/CachePage'))
+const EventsPage = lazy(() => import('./pages/EventsPage'))
+const LoginPage = lazy(() => import('./pages/LoginPage'))
+const RegisterPage = lazy(() => import('./pages/RegisterPage'))
+const NotFound = lazy(() => import('./pages/NotFoundPage'))
 
 function App() {
   return (
