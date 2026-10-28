@@ -29,7 +29,11 @@ function Navbar() {
           <li><NavLink to="/" end className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Home</NavLink></li>
           <li><NavLink to="/projects" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Projects</NavLink></li>
           <li><NavLink to="/tasks" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Tasks</NavLink></li>
-          {token && <li><NavLink to="/cache" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Cache Demo</NavLink></li>}
+          <li>
+            <NavLink to="/cache" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+              Cache <span className="nav-new-pill" style={{ background: '#f59e0b' }}>P9</span>
+            </NavLink>
+          </li>
           <li>
             <NavLink to="/events" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
               Events <span className="nav-new-pill">P10</span>
