@@ -17,7 +17,7 @@ function Navbar() {
   }
 
   return (
-    <nav className="navbar-modern">
+    <nav className="navbar navbar-modern">
       <div className="navbar-container">
         <NavLink to="/" className="navbar-brand">
           <span className="brand-dot"></span>

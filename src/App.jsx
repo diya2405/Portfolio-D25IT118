@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
-import Navbar from "./components/Navbar"
+import Navbar from "./components/navbar"
 import Footer from "./components/Footer"
 import PageLoader from './components/PageLoader'
 import './App.css'
