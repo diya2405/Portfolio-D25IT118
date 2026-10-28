@@ -5,11 +5,11 @@ import '../components/Events.css';
 
 function EventsPage() {
   const [formData, setFormData] = useState({
-    name: 'Harsh Shah',
-    email: 'harsh@example.com',
+    name: 'Diya Shah',
+    email: 'diya@example.com',
     event: 'Workshop',
     seats: 1,
-    rollNo: 'D25IT124',
+    rollNo: 'D25IT118',
   });
 
   const [pipeline, setPipeline] = useState({
@@ -131,7 +131,7 @@ function EventsPage() {
               <input
                 type="text"
                 value={formData.name}
-                placeholder="Asha Patel"
+                placeholder="Diya Shah"
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 required
               />
@@ -142,7 +142,7 @@ function EventsPage() {
               <input
                 type="email"
                 value={formData.email}
-                placeholder="asha@example.com"
+                placeholder="diya@example.com"
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 required
               />
@@ -224,7 +224,7 @@ function EventsPage() {
                 pipeline.waiting.map((item) => (
                   <div className="pipeline-item waiting" key={item.id}>
                     <div className="pipeline-item-name">{item.name}</div>
-                    <div className="pipeline-item-sub">{item.rollNo || 'D25IT124'}</div>
+                    <div className="pipeline-item-sub">{item.rollNo || 'D25IT118'}</div>
                     <div className="pipeline-item-meta">
                       {item.event}, {item.seats} seat{item.seats > 1 ? 's' : ''}
                     </div>
@@ -245,7 +245,7 @@ function EventsPage() {
                 pipeline.processing.map((item) => (
                   <div className="pipeline-item processing" key={item.id}>
                     <div className="pipeline-item-name">{item.name}</div>
-                    <div className="pipeline-item-sub">{item.rollNo || 'D25IT124'}</div>
+                    <div className="pipeline-item-sub">{item.rollNo || 'D25IT118'}</div>
                     <div className="pipeline-item-meta">
                       {item.event}, {item.seats} seat{item.seats > 1 ? 's' : ''}
                     </div>
@@ -266,7 +266,7 @@ function EventsPage() {
                 pipeline.confirmed.map((item) => (
                   <div className="pipeline-item confirmed" key={item.id}>
                     <div className="pipeline-item-name">{item.name}</div>
-                    <div className="pipeline-item-sub">{item.rollNo || 'D25IT124'}</div>
+                    <div className="pipeline-item-sub">{item.rollNo || 'D25IT118'}</div>
                     <div className="pipeline-ticket-code">{item.ticketCode}</div>
                   </div>
                 ))
