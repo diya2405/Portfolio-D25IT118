@@ -31,12 +31,12 @@ function Navbar() {
           <li><NavLink to="/tasks" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Tasks</NavLink></li>
           <li>
             <NavLink to="/cache" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
-              Cache <span className="nav-new-pill" style={{ background: '#f59e0b' }}>P9</span>
+              Cache Demo
             </NavLink>
           </li>
           <li>
             <NavLink to="/events" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
-              Events <span className="nav-new-pill">P10</span>
+              Events
             </NavLink>
           </li>
           <li><NavLink to="/contact" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Contact</NavLink></li>

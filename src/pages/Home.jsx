@@ -23,7 +23,7 @@ function Home() {
       icon: "🧠"
     },
     {
-      title: "Event Desk (Practical 10)",
+      title: "Event Desk",
       category: "Event-Driven System",
       description: "Non-blocking event pipeline with Node.js EventEmitter and real-time confirmation.",
       tech: ["Node.js", "EventEmitter", "React", "Live Polling"],
@@ -51,8 +51,8 @@ function Home() {
         </div>
         <div className="stat-divider"></div>
         <div className="stat-item">
-          <span className="stat-number">10/10</span>
-          <span className="stat-label">Practicals Implemented</span>
+          <span className="stat-number">10+</span>
+          <span className="stat-label">Engineered Modules</span>
         </div>
         <div className="stat-divider"></div>
         <div className="stat-item">

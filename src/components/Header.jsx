@@ -31,7 +31,7 @@ function Header({ name = "Diya Shah" }) {
               View Projects →
             </Link>
             <Link to="/events" className="btn-modern btn-highlight">
-              ⚡ Event Desk (P10)
+              ⚡ Event Desk
             </Link>
           </div>
 

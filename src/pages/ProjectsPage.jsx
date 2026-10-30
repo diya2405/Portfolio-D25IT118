@@ -39,7 +39,7 @@ function ProjectsPage() {
       link: "https://github.com/diya2405/task-manager-api-D25IT118"
     },
     {
-      title: "Event Desk (P10)",
+      title: "Event Desk",
       description: "Asynchronous background event pipeline using native Node.js EventEmitter without blocking client response.",
       tech: ["Node.js", "EventEmitter", "React", "Live Polling"],
       link: "https://github.com/diya2405/Portfolio-D25IT118"
