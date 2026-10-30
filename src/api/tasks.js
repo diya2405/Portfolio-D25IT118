@@ -117,3 +117,12 @@ export function resetEventPipeline() {
     headers: { 'Content-Type': 'application/json' },
   }).then(handleResponse);
 }
+
+// Practical 13: AI API Integration (Server-side key, graceful degradation)
+export function generateAiDescription(title) {
+  return fetch(`${API_BASE}/api/ai/generate-description`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title }),
+  }).then(handleResponse);
+}

@@ -240,3 +240,93 @@ body.dark .task-actions .delete-btn:hover {
   border-color: #f87171;
   color: #f87171;
 }
+
+/* Practical 13: AI Assistant Controls & Disclaimers */
+.ai-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.2rem 0;
+}
+
+.btn-ai-generate {
+  background: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 20px !important;
+  padding: 0.45rem 1rem !important;
+  font-size: 0.82rem !important;
+  font-family: inherit !important;
+  font-weight: 600 !important;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);
+}
+
+.btn-ai-generate:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4);
+}
+
+.btn-ai-generate:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.ai-suggestion-box {
+  background: rgba(124, 58, 237, 0.05);
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin-top: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.ai-meta-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.ai-priority-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: #f59e0b;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.ai-priority-badge.high {
+  background: #ef4444;
+}
+
+.ai-priority-badge.low {
+  background: #10b981;
+}
+
+.ai-deadline-badge {
+  font-size: 0.75rem;
+  font-family: 'Fira Code', monospace;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+}
+
+.ai-disclaimer-notice {
+  font-size: 0.78rem;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}

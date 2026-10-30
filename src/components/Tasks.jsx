@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getTasks, createTask, updateTask, deleteTask } from '../api/tasks';
+import { getTasks, createTask, updateTask, deleteTask, generateAiDescription } from '../api/tasks';
 import { useAuth } from '../context/AuthContext';
 import Toast from './Toast';
 import './Tasks.css';
@@ -13,6 +13,8 @@ function Tasks() {
   const [description, setDescription] = useState('');
   const [toast, setToast] = useState({ message: '', type: 'success' });
   const [creating, setCreating] = useState(false);
+  const [generatingAi, setGeneratingAi] = useState(false);
+  const [aiMetadata, setAiMetadata] = useState(null);
   const toastTimer = useRef(null);
   const { token, logout } = useAuth();
   const navigate = useNavigate();
@@ -62,6 +64,42 @@ function Tasks() {
     }, 2500);
   }
 
+  // Practical 13: Auto-generate description with AI (Server-side key + graceful degradation)
+  async function handleGenerateAiDescription() {
+    const trimmedTitle = title.trim();
+    if (!trimmedTitle) {
+      showToast('Enter a task title first to generate with AI', 'error');
+      return;
+    }
+
+    setGeneratingAi(true);
+    try {
+      const data = await generateAiDescription(trimmedTitle);
+      if (data.description) {
+        setDescription(data.description);
+        setAiMetadata({
+          priority: data.priority,
+          suggestedDeadline: data.suggestedDeadline,
+          disclaimer: data.disclaimer,
+          fallback: data.fallback,
+        });
+        showToast(
+          data.fallback
+            ? 'AI generated offline fallback suggestion (editable)'
+            : 'AI suggestion generated successfully!'
+        );
+      }
+    } catch (err) {
+      if (err.status === 429) {
+        showToast('Rate limit: Please wait a few seconds before requesting AI again.', 'error');
+      } else {
+        showToast('AI service currently offline — core app continues working.', 'error');
+      }
+    } finally {
+      setGeneratingAi(false);
+    }
+  }
+
   // Create (optimistic)
   async function handleCreate(e) {
     e.preventDefault();
@@ -80,6 +118,7 @@ function Tasks() {
     setTasks((prev) => [tempTask, ...prev]);
     setTitle('');
     setDescription('');
+    setAiMetadata(null);
     setCreating(true);
 
     try {
@@ -131,16 +170,54 @@ function Tasks() {
         <form className="task-form" onSubmit={handleCreate}>
           <input
             type="text"
-            placeholder="Task title"
+            placeholder="Task title (e.g. Debug authentication token expiry)"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
+
+          <div className="ai-actions-row">
+            <button
+              type="button"
+              className="btn-ai-generate"
+              onClick={handleGenerateAiDescription}
+              disabled={generatingAi || !title.trim()}
+              title="Auto-generate description, priority, and deadline"
+            >
+              {generatingAi ? '✨ Generating with AI…' : '✨ Auto-Generate with AI'}
+            </button>
+            <span className="small mono">Server-side AI · Graceful degradation</span>
+          </div>
+
           <input
             type="text"
-            placeholder="Description (optional)"
+            placeholder="Description (editable suggestion)"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
+
+          {aiMetadata && (
+            <div className="ai-suggestion-box">
+              <div className="ai-meta-row">
+                <span className={`ai-priority-badge ${aiMetadata.priority?.toLowerCase()}`}>
+                  Priority: {aiMetadata.priority}
+                </span>
+                {aiMetadata.suggestedDeadline && (
+                  <span className="ai-deadline-badge">
+                    📅 Deadline: {aiMetadata.suggestedDeadline}
+                  </span>
+                )}
+                {aiMetadata.fallback && (
+                  <span className="small mono" style={{ color: '#10b981' }}>
+                    🛡️ Safe Fallback Active
+                  </span>
+                )}
+              </div>
+              <p className="ai-disclaimer-notice">
+                {aiMetadata.disclaimer}
+              </p>
+            </div>
+          )}
+
           <button type="submit" disabled={creating || !title.trim()}>
             {creating ? 'Adding…' : 'Add Task'}
           </button>
