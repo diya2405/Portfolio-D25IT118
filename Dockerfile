@@ -1,6 +1,6 @@
 # Practical 11: Containerization with Docker - Diya Shah (D25IT118)
 # Multi-stage build for React frontend (Supplementary Problem)
-FROM node:18-alpine AS build
+FROM node:20-alpine AS build
 
 WORKDIR /app
 
